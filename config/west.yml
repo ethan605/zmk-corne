@@ -1,0 +1,16 @@
+manifest:
+  remotes:
+    - name: zmkfirmware
+      url-base: https://github.com/zmkfirmware
+    - name: janpfischer
+      url-base: https://github.com/janpfischer
+  projects:
+    - name: zmk
+      remote: zmkfirmware
+      revision: v0.3.0           # Pin to a stable release
+      import: app/west.yml       # Pulls in Zephyr and all ZMK dependencies
+    - name: zmk-dongle-screen
+      remote: janpfischer
+      revision: main             # Or pin to a tag like 0.1.2
+  self:
+    path: config

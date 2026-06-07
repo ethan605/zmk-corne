@@ -1,0 +1,93 @@
+#include <behaviors.dtsi>
+#include <dt-bindings/zmk/keys.h>
+#include <dt-bindings/zmk/bt.h>
+#include <dt-bindings/zmk/outputs.h>
+
+/* Name your layers for readability */
+#define BASE    0
+#define NAV     1
+#define SYM     2
+#define NUM     3
+#define FUN     4
+
+/ {
+  /* Optional: conditional layers (like QMK's tri-layer) */
+  conditional_layers {
+    compatible = "zmk,conditional-layers";
+
+    tri_layer {
+      if-layers = <NAV SYM>;
+      then-layer = <FUN>;
+    };
+  };
+
+  keymap {
+    compatible = "zmk,keymap";
+
+    base_layer {
+      display-name = "Base";
+      // ╭──────┬──────┬──────┬──────┬──────┬──────╮   ╭──────┬──────┬──────┬──────┬──────┬──────╮
+      // │ TAB  │  Q   │  W   │  E   │  R   │  T   │   │  Y   │  U   │  I   │  O   │  P   │ BSPC │
+      // ├──────┼──────┼──────┼──────┼──────┼──────┤   ├──────┼──────┼──────┼──────┼──────┼──────┤
+      // │ ESC  │  A   │  S   │  D   │  F   │  G   │   │  H   │  J   │  K   │  L   │  ;   │  '   │
+      // ├──────┼──────┼──────┼──────┼──────┼──────┤   ├──────┼──────┼──────┼──────┼──────┼──────┤
+      // │ SHFT │  Z   │  X   │  C   │  V   │  B   │   │  N   │  M   │  ,   │  .   │  /   │ RET  │
+      // ╰──────┴──────┴─────┬┴─────┬┴─────┬┴─────┬╯   ╰┬─────┴┬─────┴┬─────┴┬─────┴──────┴──────╯
+      //                     │  GUI │  NAV │  SPC │     │ SPC  │ SYM  │ ALT  │
+      //                     ╰──────┴──────┴──────╯     ╰──────┴──────┴──────╯
+      bindings = <&kp TAB &kp Q &kp W &kp E &kp R &kp T &kp Y &kp U &kp I &kp O &kp P &kp BSPC
+                  &kp ESC &kp A &kp S &kp D &kp F &kp G &kp H &kp J &kp K &kp L &kp SEMI &kp SQT
+                  &kp LSHFT &kp Z &kp X &kp C &kp V &kp B &kp N &kp M &kp COMMA &kp DOT &kp FSLH &kp
+                  RET &kp LGUI &mo NAV &kp SPACE &kp SPACE &mo SYM &kp RALT>;
+    };
+
+    nav_layer {
+      display-name = "Nav";
+      bindings = <&trans &trans &trans &trans &trans &trans &trans &trans &trans &trans &trans
+                  &trans &trans &kp LGUI &kp LALT &kp LCTRL &kp LSHFT &trans &kp LEFT &kp DOWN &kp
+                  UP &kp RIGHT &trans &trans &trans &trans &trans &trans &trans &trans &kp HOME &kp
+                  PG_DN &kp PG_UP &kp END &trans &trans &trans &trans &trans &trans &trans &trans>;
+    };
+
+    sym_layer {
+      display-name = "Sym";
+      // Your Vim-critical symbols: [ ] { } ( ) etc.
+      // Preserve transparency where your Vim sequences need it
+      bindings = <&kp GRAVE &kp EXCL &kp AT &kp HASH &kp DLLR &kp PRCNT &kp CARET &kp AMPS &kp ASTRK
+                  &kp LPAR &kp RPAR &kp DEL &trans &trans &trans &trans &trans &trans &kp MINUS &kp
+                  EQUAL &kp LBKT &kp RBKT &kp BSLH &kp PIPE &trans &trans &trans &trans &trans
+                  &trans &kp UNDER &kp PLUS &kp LBRC &kp RBRC &kp PIPE &trans &trans &trans &trans
+                  &trans &trans &trans>;
+    };
+
+    num_layer {
+      display-name = "Num";
+      bindings = <&trans &kp N1 &kp N2 &kp N3 &kp N4 &kp N5 &kp N6 &kp N7 &kp N8 &kp N9 &kp N0
+                  &trans &trans &trans &trans &trans &trans &trans &trans &kp N4 &kp N5 &kp N6
+                  &trans &trans &trans &trans &trans &trans &trans &trans &trans &kp N1 &kp N2 &kp
+                  N3 &trans &trans &trans &trans &trans &trans &trans &kp N0>;
+    };
+
+    fun_layer {
+      display-name = "Fun";
+      // F-keys, BT profile switching, output toggle
+      // F22 = YADS screen toggle, F23/F24 = brightness control
+      //
+      // NOTE on BT commands in dongle mode:
+      //   &bt BT_CLR / BT_SEL manage *host* BT profiles — e.g. pairing the
+      //   dongle to an iPad over BLE.  They do NOT reset the peripheral-to-
+      //   dongle bonds.  To fix split pairing issues, flash settings_reset
+      //   on all three devices instead.
+      //
+      // WARNING on &out OUT_TOG:
+      //   This switches the dongle's output between USB and BLE.  If no BLE
+      //   host is paired, the keyboard will appear completely dead.  Press
+      //   the same key combo again to switch back to USB.
+      bindings = <&kp F12 &kp F1 &kp F2 &kp F3 &kp F4 &kp F5 &kp F6 &kp F7 &kp F8 &kp F9 &kp F10 &kp
+                  F11 &trans &trans &trans &trans &trans &trans &kp F22 &kp F23 &kp F24 &trans
+                  &trans &trans &trans &bt BT_CLR &bt BT_SEL 0 &bt BT_SEL 1 &bt BT_SEL 2 &out
+                  OUT_TOG &trans &trans &trans &trans &trans &trans &trans &trans &trans &trans
+                  &trans &trans>;
+    };
+  };
+};
