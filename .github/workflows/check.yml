@@ -111,9 +111,13 @@ jobs:
               echo "Layer $layer: $count bindings ✓"
             fi
           done < <(
-            # Extract text between 'bindings = <' and '>;' for each layer.
-            # Join each block into a single line so `read` gets one record per layer.
-            sed -n '/bindings = </,/>;/p' "$KEYMAP" \
+            # Scope to the keymap node ('keymap {' → EOF) so that custom behavior
+            # definitions — which legitimately use their own `bindings = <...>`
+            # (e.g. hold-taps) and live above the keymap node — are not miscounted
+            # as layers. Then extract each layer's 'bindings = <' … '>;' block and
+            # join it into a single line so `read` gets one record per layer.
+            sed -n '/keymap {/,$p' "$KEYMAP" \
+              | sed -n '/bindings = </,/>;/p' \
               | awk '/bindings = </{buf=""} {buf=buf " " $0} />;/{print buf}'
           )
 
