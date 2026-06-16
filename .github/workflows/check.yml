@@ -41,12 +41,12 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@9f698171ed81b15d1823a05fc7211befd50c8ae0 # v6.0.3
 
       # ShellCheck: catches unquoted variables, word splitting, unused vars,
       # and other bash pitfalls in entrypoint.sh and any future scripts.
       - name: Lint shell scripts
-        uses: ludeeus/action-shellcheck@master
+        uses: ludeeus/action-shellcheck@00cae500b08a931fb5698e11e79bfbd38e612a38 # 2.0.0
         with:
           scandir: "."
           severity: warning
@@ -55,7 +55,7 @@ jobs:
       # west.yml silently breaks `west init`, which surfaces as a cryptic
       # CMake error rather than a clear "your YAML is broken" message.
       - name: Validate YAML
-        uses: ibiqlik/action-yamllint@v3
+        uses: ibiqlik/action-yamllint@ae1abb2821b567e96742aa776f7b62c9b6a26bc8 # v3
         with:
           file_or_dir: >-
             config/west.yml
@@ -75,7 +75,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@9f698171ed81b15d1823a05fc7211befd50c8ae0 # v6.0.3
 
       # Structural check: each layer in a 6-column Corne must have exactly
       # 42 bindings. The Devicetree parser accepts wrong counts in some
@@ -111,9 +111,10 @@ jobs:
               echo "Layer $layer: $count bindings ✓"
             fi
           done < <(
-            # Extract text between 'bindings = <' and '>;' for each layer
+            # Extract text between 'bindings = <' and '>;' for each layer.
+            # Join each block into a single line so `read` gets one record per layer.
             sed -n '/bindings = </,/>;/p' "$KEYMAP" \
-              | awk '/bindings = </{buf=""} {buf=buf $0 "\n"} />;/{print buf}'
+              | awk '/bindings = </{buf=""} {buf=buf " " $0} />;/{print buf}'
           )
 
           if [ "$layer" -eq 0 ]; then
@@ -161,12 +162,13 @@ jobs:
 
     steps:
       - name: Checkout zmk-config
-        uses: actions/checkout@v4
+        uses: actions/checkout@9f698171ed81b15d1823a05fc7211befd50c8ae0 # v6.0.3
 
       - name: Cache west modules
-        uses: actions/cache@v4
+        uses: actions/cache@27d5ce7f107fe9357f9df03efb73ab90386fccae # v5.0.5
         with:
           path: |
+            .west
             zmk
             zephyr
             modules
