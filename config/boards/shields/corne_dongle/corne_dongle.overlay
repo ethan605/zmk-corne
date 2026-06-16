@@ -21,6 +21,18 @@
     transform = <&default_transform>;
 };
 
+/*
+ * INDEX-ALIGNMENT PLACEHOLDER — do not remove.
+ *
+ * ZMK split syncs the *selected physical-layout index* (a single uint8) from the
+ * central (this dongle) to the peripherals, which apply it to their OWN local
+ * layouts[] array. The stock corne_left/corne_right halves declare layouts in the
+ * order [5col = index 0, 6col = index 1]. By declaring the same two layouts in the
+ * same order here, the dongle's 6col is also index 1, so it broadcasts "1" and the
+ * halves select 6col. If this 5col entry were dropped, the dongle would broadcast
+ * index 0, and the halves would select THEIR index 0 = 5col → scrambled keys again.
+ * The dongle never scans these (mock kscan); this layout exists purely for index parity.
+ */
 &foostan_corne_5col_layout {
     transform = <&five_column_transform>;
 };
