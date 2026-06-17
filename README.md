@@ -149,7 +149,9 @@ zmk-corne/
 ├── Dockerfile                          # Build image (zmk-dev-arm:stable)
 ├── docker-compose.yml                  # Service definition
 ├── entrypoint.sh                       # Build orchestrator (targets)
-├── extract-zephyr-bindings.sh          # Extract ZMK/Zephyr for dts-lsp
+├── scripts/
+│   ├── extract-zephyr-bindings.sh      # Extract ZMK/Zephyr trees for dts-lsp
+│   └── flash.sh                        # Serial DFU flashing (work machine)
 ├── .github/workflows/
 │   ├── build.yml                       # Post-merge build + artifacts
 │   └── check.yml                       # PR gate (lint + compile)
@@ -168,7 +170,7 @@ It needs ZMK and Zephyr source trees on the host for bindings and include
 resolution. These are extracted from the Docker image:
 
 ```sh
-./extract-zephyr-bindings.sh
+./scripts/extract-zephyr-bindings.sh
 ```
 
 This creates two gitignored directories:
