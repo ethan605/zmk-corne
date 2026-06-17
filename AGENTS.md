@@ -26,6 +26,10 @@ takes precedence where they overlap.
 
 - **ZMK v0.3.0 / Zephyr 3.5** — SHA-pinned in `config/west.yml` (ZMK `edf5c08`).
 - **YADS `zmk-dongle-screen`** — SHA-pinned in `config/west.yml`.
+- **Prospector `prospector-zmk-module`** — SHA-pinned in `config/west.yml`, alongside YADS.
+  Both display modules are pinned on every branch (one image serves both); shield-gated, so
+  Prospector is dormant unless the `prospector_adapter` shield is selected. See the
+  "Prospector dongle display" section below.
 - **`adafruit-nrfutil==0.5.3.post16`** — must match in both `Dockerfile` and
   `requirements.txt`.
 - **Apt versions are pinned in `Dockerfile` intentionally** — satisfies Hadolint DL3008.
@@ -42,6 +46,9 @@ takes precedence where they overlap.
   See README's "Which board to reflash" table.
 - CI: `check.yml` gates PRs (lint + validate-keymap + compile all 5 targets);
   `build.yml` builds + uploads artifacts on push to `main`.
+- **Dongle display is branch-switchable (YADS ↔ Prospector)** — `git checkout` +
+  `docker compose run` with no image rebuild (`entrypoint.sh` is bind-mounted). Details +
+  landmines in the "Prospector dongle display" section below; how-to in README.
 - **Verify before claiming done:** `docker compose run --rm make <target>` green is the
   floor. Changes that affect **runtime listener ordering** are not proven by a green
   build alone — confirm on-device (see landmine #1).
@@ -75,6 +82,46 @@ takes precedence where they overlap.
    overriding `ZEPHYR_EXTRA_MODULES` directly drops shield/board discovery. `entrypoint.sh`
    passes `-DZMK_EXTRA_MODULES=$CONFIG/modules/ecaps-word` to all 5 targets, and the CI
    workflows inject the same — keep them in sync.
+
+## Prospector dongle display (`feat/prospector-display` branch)
+
+The dongle display is switchable between **YADS** (default, on `main`) and **Prospector**
+(`carrefinho/prospector-zmk-module`). Both modules are pinned in `config/west.yml` on every
+branch; a branch only changes the dongle **shield** in `entrypoint.sh`
+(`dongle_screen` ↔ `prospector_adapter`) and **`config/corne_dongle.conf`**. README's
+"Dongle display" section has the switch how-to.
+
+- **One image, no rebuild on switch.** `entrypoint.sh` is **bind-mounted** (`:ro`) in
+  `docker-compose.yml`, so the shield switch takes effect at runtime on `git checkout` —
+  no `docker compose build`. This requires `entrypoint.sh` to stay **executable** (mode
+  755 — the exec-form `ENTRYPOINT` runs the mounted file; a 644 mount fails). The image
+  still **bakes** the west workspace, so adding/removing a module in `west.yml` needs a
+  one-time `docker compose build` to re-bake.
+- **Coexistence is safe.** Prospector is fully shield-gated
+  (`if(CONFIG_SHIELD_PROSPECTOR_ADAPTER)` in its CMake + `Kconfig.defconfig`), so it is
+  dormant on YADS builds and on the halves. LVGL comes from ZMK's Zephyr import — no extra
+  west project. Its `caps_word` override never fires (we use `ecaps_word`, not `caps_word`).
+- **CI builds YADS only.** `check.yml`/`build.yml` hard-code `corne_dongle dongle_screen`.
+  `feat/prospector-display` is **local-build-only** — do not merge it as-is; merging would
+  need the shield strings updated in both workflows (and `entrypoint.sh`).
+
+### Prospector landmines (on-device — not caught by a green build)
+
+1. **Pairing order / stuck widgets.** Prospector orders the peripheral battery sub-widgets
+   by connection order and the screen can wedge if halves connect before the display
+   finishes init (upstream issue #7). After a dongle reset, power the halves on **left
+   then right**. If the battery bar or layer roller look stuck (blank / not updating) even
+   though typing works: power **both** halves off, reset the dongle, then power left → right.
+2. **Display thread stack must be 4096.** `corne_dongle.conf` sets
+   `CONFIG_ZMK_DISPLAY_DEDICATED_THREAD_STACK_SIZE=4096`. ZMK core has an unconditional
+   `default 2048` that wins over Prospector's `default 4096` in Kconfig order; 2048 is too
+   small for the LVGL status screen and can stall/freeze the display thread. Do not drop
+   this line. (It only takes effect after a dongle reflash.)
+3. **Layer roller is ALL-CAPS by typeface, not config.** The roller hard-codes the FRAC
+   display font (`layer_roller.c:145,149`), which draws lowercase as capitals; the string
+   is the mixed-case `display-name`. `CONFIG_PROSPECTOR_LAYER_ROLLER_ALL_CAPS` is a no-op
+   (upstream typo: the code gates on `CONFIG_LAYER_ROLLER_ALL_CAPS`, an undefined symbol).
+   True mixed case needs a font swap in the module source (a fork) — not pursued.
 
 ## Custom Zephyr module conventions (`config/modules/<name>/`)
 
