@@ -82,6 +82,11 @@ modules in). Only the **dongle** runs the display — reflash `01-dongle` alone 
 switching; the halves are unaffected.
 
 Notes:
+- **Pairing order matters.** Prospector arranges the peripheral battery sub-widgets by
+  the order the halves connect. After flashing/resetting the dongle, power the halves on
+  **left first, then right**. If the battery bar or layer roller look stuck (blank / not
+  updating) even though typing works, power **both** halves off, reset the dongle, then
+  power on left then right.
 - The Prospector branch uses a **fixed brightness** (`CONFIG_PROSPECTOR_FIXED_BRIGHTNESS`,
   default 60) because this dongle has no ambient light sensor. The YADS keyboard
   brightness keys (F22–F24) have no effect on Prospector.
