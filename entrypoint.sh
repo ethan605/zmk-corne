@@ -32,10 +32,10 @@ export_artifacts() {
 }
 
 build_dongle() {
-	echo "==> Building dongle (central + YADS screen)..."
+	echo "==> Building dongle (central + Prospector screen)..."
 	west build -p -s "$ZMK_APP" -d "$ZMK_APP/build/dongle" \
 		-b "$XIAO_BOARD" \
-		-- -DSHIELD="corne_dongle dongle_screen" \
+		-- -DSHIELD="corne_dongle prospector_adapter" \
 		-DZMK_CONFIG="$CONFIG" \
 		-DZMK_EXTRA_MODULES="$CONFIG/modules/ecaps-word"
 	export_artifacts 01-dongle "$ZMK_APP/build/dongle"
