@@ -53,6 +53,42 @@ Shell access (for debugging west/cmake issues):
 docker compose run --rm --entrypoint bash make
 ```
 
+### Dongle display: YADS ↔ Prospector
+
+The dongle can run one of two display modules, selected by **git branch**:
+
+| Branch | Dongle display | Shield (`build_dongle`) |
+|--------|----------------|-------------------------|
+| `main` | [YADS](https://github.com/janpfischer/zmk-dongle-screen) (default) | `corne_dongle dongle_screen` |
+| `feat/prospector-display` | [Prospector](https://github.com/carrefinho/prospector-zmk-module) | `corne_dongle prospector_adapter` |
+
+Both modules are SHA-pinned in `config/west.yml` on every branch, so a single Docker
+image serves both. A branch only changes the dongle **shield** (`entrypoint.sh`) and the
+dongle **config** (`config/corne_dongle.conf`). `entrypoint.sh` is bind-mounted (see
+`docker-compose.yml`), so switching needs **no image rebuild**:
+
+```sh
+# Prospector dongle
+git checkout feat/prospector-display
+docker compose run --rm make dongle      # → firmware/01-dongle.uf2
+
+# YADS dongle
+git checkout main
+docker compose run --rm make dongle      # → firmware/01-dongle.uf2
+```
+
+Run `docker compose build` only once after a `config/west.yml` change (to bake both
+modules in). Only the **dongle** runs the display — reflash `01-dongle` alone when
+switching; the halves are unaffected.
+
+Notes:
+- The Prospector branch uses a **fixed brightness** (`CONFIG_PROSPECTOR_FIXED_BRIGHTNESS`,
+  default 60) because this dongle has no ambient light sensor. The YADS keyboard
+  brightness keys (F22–F24) have no effect on Prospector.
+- CI (`check.yml` / `build.yml`) builds the **YADS** dongle only. `feat/prospector-display`
+  is for local builds; don't merge it as-is without also updating the shield strings in
+  both workflows.
+
 ### Remote (GitHub Actions)
 
 Two workflows in `.github/workflows/`:
