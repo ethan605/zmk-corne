@@ -36,8 +36,8 @@ esac
 
 if ! command -v adafruit-nrfutil >/dev/null 2>&1; then
 	echo "ERROR: adafruit-nrfutil not found on PATH." >&2
-	echo "       Install it (e.g.: pip3 install --user adafruit-nrfutil)," >&2
-	echo "       or use the no-install browser flasher:" >&2
+	echo "       Set up the local venv:  python -m venv .venv && source .venv/bin/activate && pip install -r requirements.txt" >&2
+	echo "       Or use the no-install browser flasher:" >&2
 	echo "       https://opendisplay.org/nrf_web_tools/  (select firmware/$base.zip)" >&2
 	exit 1
 fi
