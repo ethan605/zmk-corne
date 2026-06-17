@@ -104,7 +104,19 @@ The same `NN-*.zip` works for both options.
 > `nrf_web_tools` is a third-party, browser-hosted WebSerial tool. It runs client-side and only
 > talks to the board over the serial port, but if you'd rather not rely on it, use Option B.
 
-**Option B — CLI (requires `adafruit-nrfutil` on PATH):**
+**Option B — CLI (`adafruit-nrfutil` in a local venv):**
+
+`scripts/flash.sh` needs `adafruit-nrfutil` on your PATH. Install it once in a
+virtualenv (outside Docker — `requirements.txt` pins the same version the build
+image uses):
+
+```sh
+python -m venv .venv
+source .venv/bin/activate
+pip install -r requirements.txt
+```
+
+With the venv active, flash:
 
 ```sh
 ./scripts/flash.sh dongle        # left | right | reset_xiao | reset_nano
@@ -149,6 +161,7 @@ zmk-corne/
 ├── Dockerfile                          # Build image (zmk-dev-arm:stable)
 ├── docker-compose.yml                  # Service definition
 ├── entrypoint.sh                       # Build orchestrator (targets)
+├── requirements.txt                    # Local Python deps (adafruit-nrfutil)
 ├── scripts/
 │   ├── extract-zephyr-bindings.sh      # Extract ZMK/Zephyr trees for dts-lsp
 │   └── flash.sh                        # Serial DFU flashing (work machine)
