@@ -45,6 +45,13 @@
       flavor = "tap-preferred";
       bindings = <&mo>, <&kp>;
     };
+    ecaps_word: ecaps_word {
+      compatible = "zmk,behavior-ecaps-word";
+      #binding-cells = <0>;
+      continue-list = <UNDERSCORE BACKSPACE DELETE>;
+      shift-list = <MINUS>;
+      display-name = "Ext Caps Word";
+    };
   };
 
   keymap {
@@ -65,7 +72,7 @@
       bindings = <
         &lt NUM TAB    &kp Q  &kp W  &kp E  &kp R  &kp T        &kp Y          &kp U      &kp I      &kp O    &kp P     &kp BSLH
         &mt LCTRL ESC  &kp A  &kp S  &kp D  &kp F  &kp G        &kp H          &kp J      &kp K      &kp L    &kp SEMI  &kp SQT
-        &kp LSHFT      &kp Z  &kp X  &kp C  &kp V  &kp B        &kp N          &kp M      &kp COMMA  &kp DOT  &kp FSLH  &caps_word
+        &kp LSHFT      &kp Z  &kp X  &kp C  &kp V  &kp B        &kp N          &kp M      &kp COMMA  &kp DOT  &kp FSLH  &ecaps_word
                               &mo SYS  &mt LALT DEL        &mt_thumb LGUI RET &lt_thumb NAV SPACE  &lt SYM BSPC        &mo MEDIA
       >;
     };

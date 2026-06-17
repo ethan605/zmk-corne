@@ -114,7 +114,8 @@ jobs:
             -b "${{ matrix.board }}" \
             -- -DSHIELD="${{ matrix.shield }}" \
                ${{ matrix.extra_cmake_args }} \
-               -DZMK_CONFIG="${GITHUB_WORKSPACE}/config"
+               -DZMK_CONFIG="${GITHUB_WORKSPACE}/config" \
+               -DZMK_EXTRA_MODULES="${GITHUB_WORKSPACE}/config/modules/ecaps-word"
 
       # Upload each UF2 as a named artifact. After the workflow completes,
       # all five are downloadable from the Actions run page.
