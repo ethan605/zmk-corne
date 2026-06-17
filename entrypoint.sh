@@ -36,7 +36,8 @@ build_dongle() {
 	west build -p -s "$ZMK_APP" -d "$ZMK_APP/build/dongle" \
 		-b "$XIAO_BOARD" \
 		-- -DSHIELD="corne_dongle dongle_screen" \
-		-DZMK_CONFIG="$CONFIG"
+		-DZMK_CONFIG="$CONFIG" \
+		-DZMK_EXTRA_MODULES="$CONFIG/modules/ecaps-word"
 	export_artifacts 01-dongle "$ZMK_APP/build/dongle"
 }
 
@@ -47,7 +48,8 @@ build_left() {
 		-- -DSHIELD="corne_left" \
 		-DCONFIG_ZMK_SPLIT=y \
 		-DCONFIG_ZMK_SPLIT_ROLE_CENTRAL=n \
-		-DZMK_CONFIG="$CONFIG"
+		-DZMK_CONFIG="$CONFIG" \
+		-DZMK_EXTRA_MODULES="$CONFIG/modules/ecaps-word"
 	export_artifacts 02-left "$ZMK_APP/build/left"
 }
 
@@ -58,7 +60,8 @@ build_right() {
 		-- -DSHIELD="corne_right" \
 		-DCONFIG_ZMK_SPLIT=y \
 		-DCONFIG_ZMK_SPLIT_ROLE_CENTRAL=n \
-		-DZMK_CONFIG="$CONFIG"
+		-DZMK_CONFIG="$CONFIG" \
+		-DZMK_EXTRA_MODULES="$CONFIG/modules/ecaps-word"
 	export_artifacts 03-right "$ZMK_APP/build/right"
 }
 
@@ -66,13 +69,15 @@ build_reset() {
 	echo "==> Building settings_reset (XIAO)..."
 	west build -p -s "$ZMK_APP" -d "$ZMK_APP/build/reset_xiao" \
 		-b "$XIAO_BOARD" \
-		-- -DSHIELD="settings_reset"
+		-- -DSHIELD="settings_reset" \
+		-DZMK_EXTRA_MODULES="$CONFIG/modules/ecaps-word"
 	export_artifacts 00a-reset_xiao "$ZMK_APP/build/reset_xiao"
 
 	echo "==> Building settings_reset (nice!nano)..."
 	west build -p -s "$ZMK_APP" -d "$ZMK_APP/build/reset_nano" \
 		-b "$NANO_BOARD" \
-		-- -DSHIELD="settings_reset"
+		-- -DSHIELD="settings_reset" \
+		-DZMK_EXTRA_MODULES="$CONFIG/modules/ecaps-word"
 	export_artifacts 00b-reset_nano "$ZMK_APP/build/reset_nano"
 }
 
