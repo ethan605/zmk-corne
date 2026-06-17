@@ -4,6 +4,8 @@ manifest:
       url-base: https://github.com/zmkfirmware
     - name: janpfischer
       url-base: https://github.com/janpfischer
+    - name: carrefinho
+      url-base: https://github.com/carrefinho
   projects:
     - name: zmk
       remote: zmkfirmware
@@ -12,5 +14,12 @@ manifest:
     - name: zmk-dongle-screen
       remote: janpfischer
       revision: b0f93cab8b66f0ab75586c37481f274d6c045e45   # main HEAD pinned (avoid moving-branch supply-chain risk)
+    # Prospector dongle display — fully shield-gated (active only when the
+    # `prospector_adapter` shield is in the build's SHIELD string), so it is
+    # dormant on main (YADS `dongle_screen` builds) and on the peripheral halves.
+    # Selected via the feat/prospector-display branch. SHA-pinned per supply-chain policy.
+    - name: prospector-zmk-module
+      remote: carrefinho
+      revision: 77a852293532879c992847e01db27abe4f94fa9f   # main HEAD pinned (ZMK v0.3 / Zephyr 3.5)
   self:
     path: config
