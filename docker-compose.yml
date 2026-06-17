@@ -7,5 +7,11 @@ services:
       # Config files: keymap, shields, .conf
       - ./config:/zmk-config:ro
 
+      # Build script — mounted (not just baked) so the dongle display switch
+      # (YADS vs Prospector, selected by the SHIELD in build_dongle) takes effect
+      # on `git checkout <branch>` WITHOUT an image rebuild. The image still bakes
+      # a copy (Dockerfile), but this read-only mount overrides it at runtime.
+      - ./entrypoint.sh:/usr/local/bin/entrypoint.sh:ro
+
       # Build output: .uf2 files
       - ./firmware:/firmware:rw
