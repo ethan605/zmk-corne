@@ -4,7 +4,7 @@ ZMK firmware for a Typeractive Corne 6-column wireless keyboard with a
 Prospector dongle (Seeed XIAO BLE) and YADS display.
 
 - ZMK v0.3.0 / Zephyr 3.5
-- YADS ([zmk-dongle-screen](https://github.com/janpfischer/zmk-dongle-screen)) on `main`
+- Forked YADS ([zmk-dongle-screen](https://github.com/ethan605/zmk-dongle-screen)) on `main`
 
 ## Architecture
 
