@@ -11,6 +11,6 @@ manifest:
       import: app/west.yml       # Pulls in Zephyr and all ZMK dependencies
     - name: zmk-dongle-screen
       remote: ethan605
-      revision: 26833cbca25b4cc76de4559149dc96a78bfd3b6b   # feat(corne-custom)
+      revision: 3a8709f84cfceff6335a77b88e3d829394588ae9   # Dongle screen redesign: connections one-liner, 2x2 modifiers, enlarged roller, Snazzy palette
   self:
     path: config
